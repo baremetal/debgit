@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+"""
+debgit-dch [dch options]
+
+This command is a simple wrapper around `dch` that takes the file
+`debian/changelog.in` and links it to `debian/changelog` so that `dch` can
+process it.  When `dch` is done, the link will be removed.
+"""
+import os
+import sys
+
+from clint.command import Command
+
+class Debchange(Command):
+    pass
