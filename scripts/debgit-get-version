@@ -19,24 +19,38 @@ import time
 
 import sh
 
-from cStringIO import StringIO
 from clint.command import Command
 
 
 class Debchange(Command):
+    def __init__(self, doc=None):
+        super(Debchange, self).__init__(doc=doc or __doc__)
+
     def run(self):
-        sw_version = StringIO()
+        git_version = ''
+        git_sha = None
         now = time.strftime('%y%j.%H%M')
 
         try:
-            sw_version.write(sh.git('describe', tags=True))
+            git_describe = str(sh.git('describe', tags=True).strip())
+            git_describe_split = git_describe.split('-')
+
+            git_version = git_describe_split[0]
+
+            if len(git_describe_split) > 1:
+                git_sha = git_describe_split[-1]
         except sh.ErrorReturnCode_128:
-            sw_version.write('0.0')
+            git_version = '0.0'
 
-        sw_version.write('+')
-        sw_version.write(now)
+        # when no sha is found, we are on an actual tag rather than development
+        # from a particular tag.  in this case, simply use the bare version
+        # number rather than generating a date+sha-based version number.
+        if git_sha:
+            sw_version = '{0}+{1}+{2}'.format(git_version, now, git_sha)
+        else:
+            sw_version = git_version
 
-        print sw_version.getvalue()
+        print sw_version
 
 if __name__ == '__main__':
     command = Debchange()
