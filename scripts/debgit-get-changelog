@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+"""
+debgit-get-changelog
+
+Generate a changelog list between the current revision and the last tag
+"""
+import os
+import sys
+import time
+
+import sh
+
+from clint.command import Command
+
+
+class Debchange(Command):
+    def __init__(self, doc=None):
+        super(Debchange, self).__init__(doc=doc or __doc__)
+
+    def run(self):
+        last_tag = None
+
+        try:
+            last_tag = str(sh.git('describe', '--tags', '--abbrev=0', 'HEAD^').strip())
+        except sh.ErrorReturnCode_128:
+            pass
+
+
+if __name__ == '__main__':
+    command = Debchange()
+    try:
+        sys.exit(command.run() or 0)
+    except KeyboardInterrupt:
+        command.quit()
