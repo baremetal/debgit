@@ -2,16 +2,38 @@
 """
 debgit-get-version <branch> [options]
 
-Generate a software version based on the given branch and the current time.
+Generate a software version relative to Git tags.
 
+This program will produce a unique version number for a commit based on the
+closest tag that is found.  The git tag is found using the command `git
+describe --tags`.  When the HEAD commit is tagged, the tag itself is used.  The
+tag's version is assumed to be in the format: <major>.<minor>[.revision].
 
+Non-tagged entries return a string that is in the format:
 
-root@lucid64:/appscale/appscale# git describe --tags
-0.0.1-5-gff4eb19
-root@lucid64:/appscale/appscale# git tag -d 0.0.1
-Deleted tag '0.0.1' (was 92839d3)
-root@lucid64:/appscale/appscale# git describe --tags
-fatal: No names found, cannot describe anything.
+<tag>-<revisions since tag>-g<7-character hash>
+
+For example:
+
+0.1-2-g30e80d1
+
+Tagged revisions look like:
+
+0.2
+
+The first example is converted into the format:
+
+<tag>+<YY><DDD>.<HH><MM>+g<7-character hash>
+
+For example:
+
+0.1+12334.1513+g30e80d1
+
+This is long and verbose, but using this date-based convention for non-tagged
+entries will ensure that any previously-built package that is a child of this
+tag will be considered older than newly-built packages.  Keeping the hash
+reference in the version number makes it easy to find the commit in the
+repository.
 """
 import os
 import sys
