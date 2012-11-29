@@ -15,18 +15,28 @@ fatal: No names found, cannot describe anything.
 """
 import os
 import sys
-
 import time
 
+import sh
+
+from cStringIO import StringIO
 from clint.command import Command
 
 
 class Debchange(Command):
     def run(self):
+        sw_version = StringIO()
         now = time.strftime('%y%j.%H%M')
 
-        print now
+        try:
+            sw_version.write(sh.git('describe', tags=True))
+        except sh.ErrorReturnCode_128:
+            sw_version.write('0.0')
 
+        sw_version.write('+')
+        sw_version.write(now)
+
+        print sw_version.getvalue()
 
 if __name__ == '__main__':
     command = Debchange()
