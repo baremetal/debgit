@@ -7,6 +7,8 @@ import sh
 
 from pygit2 import Repository
 
+from debgit.branch import get_branch_name
+
 def get_changelog_entries():
     """
     Iterate through any changelog entries found
@@ -27,3 +29,8 @@ def get_changelog_entries():
 
         if 'Changelog:' in commit.message:
             yield commit.message.splitlines()[0]
+
+def get_distribution():
+    branch = get_branch_name()
+
+    return 'stable' if branch == 'master' else branch
