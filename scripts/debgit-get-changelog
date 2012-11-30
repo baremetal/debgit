@@ -1,9 +1,4 @@
 #!/usr/bin/env python
-"""
-debgit-get-changelog
-
-Generate a changelog list between the current revision and the last tag
-"""
 import os
 import sys
 import time
@@ -11,23 +6,43 @@ import time
 import sh
 
 from clint.command import Command
+from pygit2 import Repository
 
 
-class Debchange(Command):
+class GetChangelogEntries(Command):
+    """
+    debgit-get-changelog
+
+    Generate a changelog list between the current revision and the last tag.
+    """
+
     def __init__(self, doc=None):
-        super(Debchange, self).__init__(doc=doc or __doc__)
+        super(GetChangelogEntries, self).__init__(doc=doc or __doc__)
 
     def run(self):
         last_tag = None
 
+        # TODO: cd over to the repo
+        #os.cwd()
+
         try:
             last_tag = str(sh.git('describe', '--tags', '--abbrev=0', 'HEAD^').strip())
+            ref = '{0}..{1}'.format(last_tag, 'HEAD')
         except sh.ErrorReturnCode_128:
-            pass
+            ref = 'HEAD'
+
+        repo = Repository('.git')
+
+        for line in sh.git('rev-list', ref, _iter=True):
+            commit_hash = line.strip()
+            commit = repo[commit_hash]
+
+            if 'Changelog:' in commit.message:
+                print(commit.message.splitlines()[0])
 
 
 if __name__ == '__main__':
-    command = Debchange()
+    command = GetChangelogEntries()
     try:
         sys.exit(command.run() or 0)
     except KeyboardInterrupt:
