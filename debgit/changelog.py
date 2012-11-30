@@ -30,7 +30,7 @@ def get_changelog_entries():
         if 'Changelog:' in commit.message:
             yield commit.message.splitlines()[0]
 
-def get_distribution():
-    branch = get_branch_name()
+def get_distribution(branch=None):
+    branch = branch or get_branch_name()
 
     return 'stable' if branch == 'master' else branch
