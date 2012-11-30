@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+import os
+import sys
+
+from cStringIO import StringIO
+
+import sh
+
+from clint.command import Command
+
+from debgit.branch import get_branch_list
+from debgit.changelog import get_distribution
+from debgit.reprepro import Section
+
+DEFAULT_CHANGELOG_FILE = 'debian/changelog'
+
+
+class CreateRepreproConfig(Command):
+    """
+    debgit-create-reprepro-config <repo> <template> <output_file>
+
+    Create a reprepro configuration file from a base template and a list of all
+    the branches in the repo.
+    """
+
+    def __init__(self, doc=None):
+        super(CreateRepreproConfig, self).__init__(doc=doc or self.__class__.__doc__)
+
+    def _fill_parser(self):
+        """
+        Add optional and positional arguments to the arg parser
+        """
+
+        super(CreateRepreproConfig, self)._fill_parser()
+
+        p = self.parser
+
+        p.add_argument('repo', help='path to the appscale repository')
+        p.add_argument('template', help='path to the configuration template file')
+        p.add_argument('output_file', help='where to write the template')
+
+    def run(self):
+        """
+        Generate the reprepro configuration.
+        """
+
+        buf = StringIO()
+
+        for branch in get_branch_list():
+            distribution = get_distribution(branch)
+            buf.write('{0}\n\n'.format(Section(self.args.template).render(distribution)))
+
+        # get rid of the trailing \n
+        value = buf.getvalue()[:-1]
+
+        if self.args.output_file == '-':
+            print value
+        else:
+            with open(self.args.output_file, 'wb') as f:
+                f.write(value)
+
+
+if __name__ == '__main__':
+    command = CreateRepreproConfig()
+    try:
+        sys.exit(command.run() or 0)
+    except KeyboardInterrupt:
+        command.quit()
