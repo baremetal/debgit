@@ -11,5 +11,5 @@ def get_branch_list():
     return a list of all the branches in a given repository
     """
 
-    for line in sh.git('branch', '-a', _iter=True):
-        yield line[2:]
+    for line in sh.git('branch', '-a', '--no-color', _iter=True):
+        yield line[2:].strip()
