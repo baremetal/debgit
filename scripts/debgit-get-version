@@ -44,9 +44,9 @@ import sh
 from clint.command import Command
 
 
-class Debchange(Command):
+class GetVersion(Command):
     def __init__(self, doc=None):
-        super(Debchange, self).__init__(doc=doc or __doc__)
+        super(GetVersion, self).__init__(doc=doc or __doc__)
 
     def run(self):
         git_version = ''
@@ -75,7 +75,7 @@ class Debchange(Command):
         print sw_version
 
 if __name__ == '__main__':
-    command = Debchange()
+    command = GetVersion()
     try:
         command.run()
     except KeyboardInterrupt:
