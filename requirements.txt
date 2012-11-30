@@ -4,3 +4,4 @@ sh==1.07
 jinja2
 
 -e git://github.com/rca/clint.git@command_object#egg=clint-dev
+-e git://github.com/libgit2/pygit2@master#egg=pygit
