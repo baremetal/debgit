@@ -2,4 +2,4 @@ argparse
 nose==1.2.1
 sh==1.07
 
--e git://github.com/rca/clint.git@c56d059fe6d9909a088f70f3df8d44810e5a9e75#egg=clint-dev
+-e git://github.com/rca/clint.git@command_object#egg=clint-dev
