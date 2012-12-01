@@ -1,8 +1,6 @@
 """
 Module for managing changelog information
 """
-import os
-
 import sh
 
 from pygit2 import Repository
@@ -13,6 +11,7 @@ def get_changelog_entries():
     """
     Iterate through any changelog entries found
     """
+
     last_tag = None
 
     try:
@@ -31,6 +30,13 @@ def get_changelog_entries():
             yield commit.message.splitlines()[0]
 
 def get_distribution(branch=None):
+    """
+    Return the distribution name based on the branch
+
+    Return the branch name as is unless the branch is master, in which case the
+    string "stable" should be returned.
+    """
+
     branch = branch or get_branch_name()
 
     return 'stable' if branch == 'master' else branch

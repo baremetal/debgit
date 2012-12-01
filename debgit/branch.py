@@ -1,13 +1,19 @@
 """
 Debgit branch management
 """
+import re
 import sh
 
-GIT_PUSH_URL_RE = re.compile(r'Push\s+URL:\s+(?P<git_uri>.*)')
-GIT_SSH_URI_RE = re.compile(r'(?P<username>.*?)@(?P<hostname>[^:]+):(?P<repo_path>.*).git')
+from debgit.ssh import cache_ssh_key
 
+GIT_PUSH_URL_RE = re.compile(r'Push\s+URL:\s+(?P<git_uri>.*)')
+GIT_SSH_URI_RE = re.compile(
+    r'(?P<username>.*?)@(?P<hostname>[^:]+):(?P<repo_path>.*).git')
 
 def get_branch_name():
+    """
+    Get the name of the current git branch.
+    """
     return str(sh.basename(str(sh.git('symbolic-ref', 'HEAD')))).strip()
 
 def get_branch_list():

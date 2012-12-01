@@ -6,6 +6,12 @@ import time
 import sh
 
 def get_version():
+    """
+    Based on the version returned by `git describe --tags`, generate a
+    date-based version number that shows this branch's relationship relative to the
+    last tag in this repository.
+    """
+
     git_version = ''
     git_sha = None
     now = time.strftime('%y%j.%H%M')
